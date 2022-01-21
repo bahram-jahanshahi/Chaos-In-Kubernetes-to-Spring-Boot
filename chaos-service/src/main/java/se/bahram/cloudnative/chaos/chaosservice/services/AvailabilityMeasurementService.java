@@ -9,6 +9,7 @@ import se.bahram.cloudnative.chaos.chaosservice.domain.ChaoticInstance;
 
 import java.net.SocketTimeoutException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.Validate.*;
 
@@ -59,6 +60,10 @@ public class AvailabilityMeasurementService {
 
     public Optional<ChaoticInstance> getInstanceByUrl(String url) {
         return chaoticInstanceMap.containsKey(url) ? Optional.of(chaoticInstanceMap.get(url)) : Optional.empty();
+    }
+
+    public List<ChaoticInstance> getAllChaoticInstances() {
+        return chaoticInstanceMap.values().stream().collect(Collectors.toList());
     }
 
     private SimpleClientHttpRequestFactory getSimpleClientHttpRequestFactory() {
