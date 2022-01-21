@@ -5,6 +5,7 @@ import org.apache.commons.validator.routines.UrlValidator;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
+import java.util.Objects;
 
 import static org.apache.commons.lang3.Validate.*;
 
@@ -12,7 +13,7 @@ public class ChaoticInstance {
 
     private final String url;
 
-    String[] schemes = {"http","https"};
+    String[] schemes = {"http", "https"};
     UrlValidator urlValidator = new UrlValidator(UrlValidator.ALLOW_ALL_SCHEMES);
     private Date birthDate;
     private Date downtimeStart;
@@ -20,7 +21,7 @@ public class ChaoticInstance {
 
     public ChaoticInstance(String url) {
         notNull(url, "Url is null");
-        if (! urlValidator.isValid(url)) {
+        if (!urlValidator.isValid(url)) {
             throw new IllegalArgumentException();
         }
         this.url = url;
@@ -52,5 +53,20 @@ public class ChaoticInstance {
 
     public void setDowntime(Long downTime) {
         this.downtime = downTime;
+    }
+
+    public double percentageOfAvailability() {
+        Long nowTime = System.currentTimeMillis();
+        if (Objects.nonNull(getBirthDate())) {
+            double totalTime = nowTime - getBirthDate().getTime();
+            if (Objects.nonNull(getDowntime())) {
+                double availableTime = (totalTime - getDowntime());
+                double availableTimePercentage = (availableTime / totalTime) * 10000;
+                return Math.ceil(availableTimePercentage) / 100;
+            } else {
+                return 100;
+            }
+        }
+        return 0;
     }
 }
